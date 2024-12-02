@@ -7,7 +7,7 @@ const ContextProvider = ({ children }) => {
   // the app user
   const [appUser, setAppUser] = useState(null);
   // pokemon-list
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(18);
   const [offset, setOffset] = useState(0);
   const [count, setCount] = useState(null);
   const [previous, setPrevious] = useState(null);
@@ -22,16 +22,14 @@ const ContextProvider = ({ children }) => {
    */
   const fetchPokemons = async (url) => {
     try {
-      const urlToFetch = url || `${import.meta.env.VITE_API_POKEMON}?offset=${offset}&limit=${limit}`;
-      const response = await axios.get(
-        urlToFetch,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data);
+      const urlToFetch =
+        url ||
+        `${import.meta.env.VITE_API_POKEMON}?offset=${offset}&limit=${limit}`;
+      const response = await axios.get(urlToFetch, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setCount(response.data.count);
       setPrevious(response.data.previous);
       setNext(response.data.next);
@@ -48,19 +46,17 @@ const ContextProvider = ({ children }) => {
    */
   const fetchPokemonByUrl = async (url, owner) => {
     try {
-      const response = await axios.get(
-        url,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data);
+      const response = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (owner === "user") {
         setUserPokemon(response.data);
-      } else {
+      } else if(owner === "opponent"){
         setOpponentPokemon(response.data);
+      }else{
+        return response.data;
       }
     } catch (error) {
       toast.error("Error: " + error.message);
@@ -87,11 +83,12 @@ const ContextProvider = ({ children }) => {
         count,
         next,
         previous,
+        fetchPokemons,
         pokemons,
 
         // single pokemon stuff
         fetchPokemonByUrl,
-        pokemon: userPokemon,
+        userPokemon,
         setUserPokemon,
         opponentPokemon,
         setOpponentPokemon,
