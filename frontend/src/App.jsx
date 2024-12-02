@@ -21,7 +21,6 @@ const router = createBrowserRouter(
       <Route path="/pokemon">
         <Route index element={<PokemonList />} />
         <Route path=":name" element={<PokemonDetails />} />
-        <Route path=":id" element={<PokemonDetails />} />
       </Route>
       <Route path="/roster" element={<RosterPage />} />
       <Route path="/battle" element={<BattlePage />} />
