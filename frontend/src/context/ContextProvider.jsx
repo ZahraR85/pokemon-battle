@@ -15,6 +15,7 @@ const ContextProvider = ({ children }) => {
   const [pokemons, setPokemons] = useState(null);
   // pokemon single, selected by user
   const [userPokemon, setUserPokemon] = useState(null);
+  const [opponentPokemon, setOpponentPokemon] = useState(null);
 
   /**
    * fetches a list of pokemons
@@ -42,8 +43,9 @@ const ContextProvider = ({ children }) => {
   /**
    * fetches a single pokemon by it's id
    * @param {Number} id
+   * @param {String} owner  the owner of the pokemon ("user" or "opponent")
    */
-  const fetchPokemonById = async (id) => {
+  const fetchPokemonById = async (id, owner) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_POKEMON}/${id}`,
@@ -54,7 +56,11 @@ const ContextProvider = ({ children }) => {
         }
       );
       console.log(response.data);
-      setUserPokemon(response.data);
+      if (owner === "user") {
+        setUserPokemon(response.data);
+      } else {
+        setOpponentPokemon(response.data);
+      }
     } catch (error) {
       toast.error("Error: " + error.message);
     }
@@ -86,6 +92,8 @@ const ContextProvider = ({ children }) => {
         fetchPokemonById,
         pokemon: userPokemon,
         setUserPokemon,
+        opponentPokemon,
+        setOpponentPokemon,
       }}
     >
       {children}
