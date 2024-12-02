@@ -12,12 +12,14 @@ import LeaderboardPage from "./components/Leaderboard/LeaderboardPage.jsx";
 import LoginForm from "./components/Authentication/LoginForm.jsx";
 import SignupForm from "./components/Authentication/SignupForm.jsx";
 import Layout from "./pages/Layout.jsx";
+import PokemonList from "./components/Pokemon/PokemonList.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<HomePage />} />
       <Route path="/pokemon">
+        <Route index element={<PokemonList />} />
         <Route path=":name" element={<PokemonDetails />} />
         <Route path=":id" element={<PokemonDetails />} />
       </Route>

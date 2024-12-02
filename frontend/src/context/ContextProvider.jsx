@@ -20,10 +20,11 @@ const ContextProvider = ({ children }) => {
   /**
    * fetches a list of pokemons
    */
-  const fetchPokemons = async () => {
+  const fetchPokemons = async (url) => {
     try {
+      const urlToFetch = url || `${import.meta.env.VITE_API_POKEMON}?offset=${offset}&limit=${limit}`;
       const response = await axios.get(
-        `${import.meta.env.VITE_API_POKEMON}?offset=${offset}&limit=${limit}`,
+        urlToFetch,
         {
           headers: {
             "Content-Type": "application/json",
@@ -42,13 +43,13 @@ const ContextProvider = ({ children }) => {
 
   /**
    * fetches a single pokemon by it's id
-   * @param {Number} id
+   * @param {String} url the url of the pokemoon
    * @param {String} owner  the owner of the pokemon ("user" or "opponent")
    */
-  const fetchPokemonById = async (id, owner) => {
+  const fetchPokemonByUrl = async (url, owner) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_POKEMON}/${id}`,
+        url,
         {
           headers: {
             "Content-Type": "application/json",
@@ -89,7 +90,7 @@ const ContextProvider = ({ children }) => {
         pokemons,
 
         // single pokemon stuff
-        fetchPokemonById,
+        fetchPokemonByUrl,
         pokemon: userPokemon,
         setUserPokemon,
         opponentPokemon,
