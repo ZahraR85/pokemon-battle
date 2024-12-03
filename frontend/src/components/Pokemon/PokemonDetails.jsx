@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { useApp } from "../../context/AppContext";
 
 const PokemonDetails = () => {
-  const { setUserPokemon, fetchPokemonByUrl } = useApp();
+  const { setUserPokemon, findInRoster, addToRoster, removeFromRoster } =
+    useApp();
   const { name } = useParams();
   const [pokemon, setPokemon] = useState(null);
   const navigate = useNavigate();
@@ -32,6 +33,16 @@ const PokemonDetails = () => {
     navigate("/battle");
   };
 
+  const handleAddToRoster = () => {
+    addToRoster(pokemon);
+    navigate("/roster");
+  };
+
+  const handleRemoveFromRoster = () => {
+    removeFromRoster(pokemon);
+    navigate("/roster");
+  };
+
   return (
     <>
       {pokemon && (
@@ -46,6 +57,18 @@ const PokemonDetails = () => {
             <h2 className="card-title">{pokemon.name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
             <div className="card-actions justify-end">
+              {findInRoster(pokemon) ? (
+                <button
+                  className="btn"
+                  onClick={() => handleRemoveFromRoster()}
+                >
+                  remove from roster
+                </button>
+              ) : (
+                <button className="btn" onClick={() => handleAddToRoster()}>
+                  add to roster
+                </button>
+              )}
               <button className="btn" onClick={() => handleBattle()}>
                 battle
               </button>
