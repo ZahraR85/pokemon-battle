@@ -16,6 +16,8 @@ const ContextProvider = ({ children }) => {
   // pokemon single, selected by user
   const [userPokemon, setUserPokemon] = useState(null);
   const [opponentPokemon, setOpponentPokemon] = useState(null);
+  // roster
+  const [roster, setRoster] = useState([]);
 
   /**
    * fetches a list of pokemons
@@ -53,9 +55,9 @@ const ContextProvider = ({ children }) => {
       });
       if (owner === "user") {
         setUserPokemon(response.data);
-      } else if(owner === "opponent"){
+      } else if (owner === "opponent") {
         setOpponentPokemon(response.data);
-      }else{
+      } else {
         return response.data;
       }
     } catch (error) {
@@ -67,6 +69,40 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     fetchPokemons();
   }, []);
+
+  /**
+   * adds a pokemon to the roster
+   * @param {Object} pokemon
+   * @returns
+   */
+  const addToRoster = (pokemon) => {
+    if (findInRoster(pokemon)) {
+      toast.warning(`${pokemon.name} is already on your roster`);
+      return;
+    }
+    setRoster([...roster, pokemon]);
+
+    // TODO: save to db
+  };
+
+  /**
+   * removes a pokemon from the roster
+   * @param {Object} pokemon
+   */
+  const removeFromRoster = (pokemon) => {
+    const res = roster.filter((element) => element.id !== pokemon.id);
+    setRoster(res);
+
+    // TODO: save to db
+  };
+
+  /**
+   * finds a pokemon in the roster
+   * @param {Object} pokemon
+   */
+  const findInRoster = (pokemon) => {
+    return roster.find((element) => element.id === pokemon.id);
+  };
 
   return (
     <AppContext.Provider
@@ -92,6 +128,14 @@ const ContextProvider = ({ children }) => {
         setUserPokemon,
         opponentPokemon,
         setOpponentPokemon,
+
+        // roster
+        roster,
+        setRoster,
+
+        addToRoster,
+        removeFromRoster,
+        findInRoster,
       }}
     >
       {children}

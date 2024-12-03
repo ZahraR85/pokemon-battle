@@ -5,7 +5,7 @@ const PokemonCard = ({ pokemon }) => {
   const imgUrl = `${import.meta.env.VITE_API_POKEMON_IMG}${pokemonId}.png`;
   return (
     <div className="card card-compact bg-base-100 w-full shadow-xl">
-      <figure>
+      <figure className="">
         <img src={imgUrl} alt={pokemon.name} />
       </figure>
       <div className="card-body">

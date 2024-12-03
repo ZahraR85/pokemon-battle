@@ -8,7 +8,7 @@ const BattleCard = ({ pokemon, owner }) => {
         <img src={imgUrl} alt={pokemon.name} />
       </figure>
       <div className="card-body">
-        <h2 className="card-title">{owner}: {pokemon.name}</h2>
+        <h2 className="card-title">{owner} {pokemon.name}</h2>
         <div className="card-actions justify-end">
           <Link to={`/pokemon/${pokemon.name}`} className="btn">details</Link>
         </div>
