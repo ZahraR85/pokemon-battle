@@ -4,9 +4,12 @@ import BattleCard from "./BattleCard";
 import { toast } from "react-toastify";
 
 const BattlePage = () => {
-  const { count, fetchPokemonByUrl, userPokemon, opponentPokemon } = useApp();
+  const { count, fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle } =
+    useApp();
 
+  const [loading, setLoading] = useState(true);
   const [winnerPokemon, setWinnerPokemon] = useState(null);
+  const [winner, setWinner] = useState(null);
 
   useEffect(() => {
     const randomId = Math.floor(Math.random() * count) + 1;
@@ -14,23 +17,37 @@ const BattlePage = () => {
     fetchPokemonByUrl(randomPokemonUrl, "opponent");
   }, []);
 
+  useEffect(() => {
+    setLoading(false);
+  }, [opponentPokemon]);
+
   const handleFight = () => {
     // using "attack" stats to define winner:
     const userPokemonAttack = userPokemon.stats[1].base_stat;
     const opponentPokemonAttack = opponentPokemon.stats[1].base_stat;
 
-    if(userPokemonAttack > opponentPokemonAttack) {
+    if (userPokemonAttack > opponentPokemonAttack) {
       setWinnerPokemon(userPokemon);
-      toast.success("your pokemon won")
-    }else if(userPokemonAttack < opponentPokemonAttack){
+      toast.success("your pokemon won");
+      setWinner("user");
+    } else if (userPokemonAttack < opponentPokemonAttack) {
       setWinnerPokemon(opponentPokemon);
-      toast.error("opponent pokemon won")
-    }else{
-      toast.warning("it's a draw")
+      toast.error("opponent pokemon won");
+      setWinner("opponent");
+    } else {
+      toast.warning("it's a draw");
     }
   };
 
-  const handleSave = () => {};
+  const handleSave = () => {
+    const result = {
+      userPokemon,
+      opponentPokemon,
+      winner
+    }
+
+    saveBattle(result);
+  };
 
   return (
     <>
@@ -50,7 +67,11 @@ const BattlePage = () => {
             save battle
           </button>
         ) : (
-          <button className="btn btn-secondary" onClick={() => handleFight()}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => handleFight()}
+            disabled={loading}
+          >
             fight!
           </button>
         )}

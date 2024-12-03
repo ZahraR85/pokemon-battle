@@ -18,6 +18,16 @@ const ContextProvider = ({ children }) => {
   const [opponentPokemon, setOpponentPokemon] = useState(null);
   // roster
   const [roster, setRoster] = useState([]);
+  // leaderboard
+  const [leaderboard, setLeaderboard] = useState();
+
+  const fetchUser = (id) => {
+    // TODO: fetch user from db & setAppUser(...)
+  }
+
+  const fetchLeaderboard = (id) => {
+    // TODO: fetch leaderboard from db & setLeaderboard(...)
+  }
 
   /**
    * fetches a list of pokemons
@@ -65,9 +75,10 @@ const ContextProvider = ({ children }) => {
     }
   };
 
-  // fetch the initial pokemon list
+  // fetch the initial data
   useEffect(() => {
     fetchPokemons();
+    fetchLeaderboard();
   }, []);
 
   /**
@@ -104,6 +115,22 @@ const ContextProvider = ({ children }) => {
     return roster.find((element) => element.id === pokemon.id);
   };
 
+  /**
+   * saves the battle results to db
+   * @param {Object} result 
+   */
+  const saveBattle = (result) => {
+    // const result = {
+    //   userPokemon,
+    //   opponentPokemon,
+    //   winner
+    // }
+
+    console.log(result);
+
+    // TODO: save to db
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -136,6 +163,9 @@ const ContextProvider = ({ children }) => {
         addToRoster,
         removeFromRoster,
         findInRoster,
+
+        saveBattle,
+        leaderboard,
       }}
     >
       {children}
