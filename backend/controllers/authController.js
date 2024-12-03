@@ -1,5 +1,10 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
+
+export const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+};
 
 // Register a new user
 export const registerUser = asyncHandler(async (req, res) => {
