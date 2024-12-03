@@ -1,8 +1,20 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 
 const Header = () => {
-  const { userPokemon } = useApp();
+  const { userPokemon, users, setAppUser, setRoster } = useApp();
+
+  const handleChange = (e) => {
+    const id = parseInt(e.target.value);
+    const user = getUserById(id);
+    setRoster([])
+    setAppUser({ ...user });
+  };
+
+  const getUserById = (id) => {
+    return users.find((u) => u.id === id);
+  };
+
   return (
     <header className="z-10">
       <nav className="navbar bg-base-100 shadow-xl">
@@ -82,6 +94,21 @@ const Header = () => {
               </NavLink>
             </li>
           </ul>
+          <div className="form-control">
+            <select
+              name="user"
+              className="select select-bordered w-full max-w-xs"
+              onChange={handleChange}
+            >
+              <option>select user...</option>
+              {users &&
+                users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
       </nav>
     </header>

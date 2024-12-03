@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { AppContext } from "./AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
+import { fakeData } from "../data/fakeData";
+
 const ContextProvider = ({ children }) => {
+  // all users
+  const [users, setUsers] = useState(null);
   // the app user
   const [appUser, setAppUser] = useState(null);
   // pokemon-list
@@ -22,12 +26,18 @@ const ContextProvider = ({ children }) => {
   const [leaderboard, setLeaderboard] = useState();
 
   const fetchUser = (id) => {
-    // TODO: fetch user from db & setAppUser(...)
-  }
+    // TODO: fetch user from db & setAppUser(...) && setRoster() (full pokemons!!!)
+  };
+
+  const fetchUsers = (id) => {
+    // TODO: fetch users from db (replace the fake)
+    setUsers(fakeData.users);
+  };
 
   const fetchLeaderboard = (id) => {
     // TODO: fetch leaderboard from db & setLeaderboard(...)
-  }
+    setLeaderboard(fakeData.leaderboard);
+  };
 
   /**
    * fetches a list of pokemons
@@ -78,20 +88,28 @@ const ContextProvider = ({ children }) => {
   // fetch the initial data
   useEffect(() => {
     fetchPokemons();
+    fetchUsers();
     fetchLeaderboard();
   }, []);
 
+  useEffect(() => {
+    if (appUser && appUser.roster) {
+      setRoster(appUser.roster);
+    }
+  }, [appUser]);
+
   /**
    * adds a pokemon to the roster
-   * @param {Object} pokemon
+   * @param {String} pokemonName
    * @returns
    */
-  const addToRoster = (pokemon) => {
-    if (findInRoster(pokemon)) {
-      toast.warning(`${pokemon.name} is already on your roster`);
+  const addToRoster = (pokemonName) => {
+    const found = findInRoster(pokemonName)
+    if (found ) {
+      toast.warning(`pokemon is already on your roster`);
       return;
     }
-    setRoster([...roster, pokemon]);
+    setRoster([...roster, pokemonName]);
 
     // TODO: save to db
   };
@@ -101,7 +119,7 @@ const ContextProvider = ({ children }) => {
    * @param {Object} pokemon
    */
   const removeFromRoster = (pokemon) => {
-    const res = roster.filter((element) => element.id !== pokemon.id);
+    const res = roster.filter((element) => element !== pokemon.name);
     setRoster(res);
 
     // TODO: save to db
@@ -109,15 +127,15 @@ const ContextProvider = ({ children }) => {
 
   /**
    * finds a pokemon in the roster
-   * @param {Object} pokemon
+   * @param {String} pokemonName
    */
-  const findInRoster = (pokemon) => {
-    return roster.find((element) => element.id === pokemon.id);
+  const findInRoster = (pokemonName) => {
+    return roster.find((element) => element === pokemonName);
   };
 
   /**
    * saves the battle results to db
-   * @param {Object} result 
+   * @param {Object} result
    */
   const saveBattle = (result) => {
     // const result = {
@@ -135,6 +153,7 @@ const ContextProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         // for user stuff
+        users,
         appUser,
         setAppUser,
 
