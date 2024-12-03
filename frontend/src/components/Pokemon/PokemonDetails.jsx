@@ -55,7 +55,7 @@ const PokemonDetails = () => {
           </figure>
           <div className="card-body">
             <h2 className="card-title">{pokemon.name}</h2>
-            <p>If a dog chews shoes whose shoes does he choose?</p>
+            <p>Attack: {pokemon.stats[1].base_stat}</p>
             <div className="card-actions justify-end">
               {findInRoster(pokemon) ? (
                 <button
