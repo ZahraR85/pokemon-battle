@@ -9,6 +9,7 @@ const BattleCard = ({ pokemon, owner }) => {
       </figure>
       <div className="card-body">
         <h2 className="card-title">{owner} {pokemon.name}</h2>
+        <p>Attack: {pokemon.stats[1].base_stat}</p>
         <div className="card-actions justify-end">
           <Link to={`/pokemon/${pokemon.name}`} className="btn">details</Link>
         </div>
