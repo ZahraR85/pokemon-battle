@@ -47,3 +47,14 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 });
+
+// Get user profile
+export const getProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).select('-password'); // Exclude password
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
