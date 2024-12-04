@@ -17,10 +17,10 @@ app.use(cors());
 app.use(morgan('dev'));
 
 // API routes
-//app.use('/api/auth', authRoutes);
-//app.use('/api/battle', battleRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/battle', battleRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-//app.use('/api/pokemon', pokemonRoutes);
+app.use('/api/pokemon', pokemonRoutes);
 app.use('/api/roster', rosterRoutes);
 
 // Error handler
