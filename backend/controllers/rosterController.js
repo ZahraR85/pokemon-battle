@@ -12,6 +12,10 @@ export const getRoster = async (req, res) => {
 export const addToRoster = async (req, res) => {
     const { pokemon } = req.body;
 
+    if (!pokemon || !pokemon.name || !pokemon.type || !pokemon.level) {
+        return res.status(400).json({ message: "Invalid Pokémon data" });
+    }
+
     try {
         let roster = await Roster.findOne({ userId: req.user.id });
         if (!roster) {
@@ -22,9 +26,11 @@ export const addToRoster = async (req, res) => {
         const updatedRoster = await roster.save();
         res.status(201).json(updatedRoster);
     } catch (error) {
+        console.error(error); // Log the error for debugging
         res.status(500).json({ message: error.message });
     }
 };
+
 export const removeFromRoster = async (req, res) => {
   const { pokemonId } = req.params;  // Assuming you pass the Pokemon ID to be removed in the URL
 
