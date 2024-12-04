@@ -7,16 +7,16 @@ export const endpoints = {
     profile: `${API_BASE_URL}/auth/profile`,
   },
   battle: {
-    base: `${API_BASE_URL}/battles`,
-    byId: (id) => `${API_BASE_URL}/battles/${id}`,
+    base: `${API_BASE_URL}/battle`,
+    byId: (id) => `${API_BASE_URL}/battle/${id}`,
   },
   roster: {
-    base: `${API_BASE_URL}/rosters`,
-    byId: (id) => `${API_BASE_URL}/rosters/${id}`,
+    base: `${API_BASE_URL}/roster`,
+    byId: (id) => `${API_BASE_URL}/roster/${id}`,
   },
   leaderboard: {
-    base: `${API_BASE_URL}/leaderboards`,
-    byId: (id) => `${API_BASE_URL}/leaderboards/${id}`,
+    base: `${API_BASE_URL}/leaderboard`,
+    byId: (id) => `${API_BASE_URL}/leaderboard/${id}`,
   },
   pokemon: {
     base: `${API_BASE_URL}/pokemon`,
