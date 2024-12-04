@@ -22,20 +22,25 @@ const BattlePage = () => {
   }, [opponentPokemon]);
 
   const handleFight = () => {
-    // using "attack" stats to define winner:
-    const userPokemonAttack = userPokemon.stats[1].base_stat;
-    const opponentPokemonAttack = opponentPokemon.stats[1].base_stat;
+    // using random stats to define winner:
+    toast.info('picking random stat for fighting');
+    const randomStat = Math.floor(Math.random() * userPokemon.stats.length);
+    console.log(randomStat);
+    toast.info(`chose "${userPokemon.stats[randomStat].stat.name}"`);
+
+    const userPokemonAttack = userPokemon.stats[randomStat].base_stat;
+    const opponentPokemonAttack = opponentPokemon.stats[randomStat].base_stat;
 
     if (userPokemonAttack > opponentPokemonAttack) {
       setWinnerPokemon(userPokemon);
-      toast.success("your pokemon won");
+      toast.success(`your pokemon won`);
       setWinner("user");
     } else if (userPokemonAttack < opponentPokemonAttack) {
       setWinnerPokemon(opponentPokemon);
-      toast.error("opponent pokemon won");
+      toast.error(`opponent pokemon won`);
       setWinner("opponent");
     } else {
-      toast.warning("it's a draw");
+      toast.warning(`it's a draw`);
     }
   };
 
@@ -53,11 +58,11 @@ const BattlePage = () => {
     <>
       <ul className="max-w-screen-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 my-8">
         <li>
-          {userPokemon && <BattleCard pokemon={userPokemon} owner="user" />}
+          {userPokemon && <BattleCard pokemon={userPokemon} owner="user" winner={winner} />}
         </li>
         <li>
           {opponentPokemon && (
-            <BattleCard pokemon={opponentPokemon} owner="opponent" />
+            <BattleCard pokemon={opponentPokemon} owner="opponent" winner={winner} />
           )}
         </li>
       </ul>

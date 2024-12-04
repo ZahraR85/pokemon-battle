@@ -55,7 +55,13 @@ const PokemonDetails = () => {
           </figure>
           <div className="card-body">
             <h2 className="card-title">{pokemon.name}</h2>
-            <p>Attack: {pokemon.stats[1].base_stat}</p>
+            <ul>
+              {pokemon.stats.map((stat) => (
+                <li key={stat.id}>
+                  {stat.stat.name}: {stat.base_stat}
+                </li>
+              ))}
+            </ul>
             <div className="card-actions justify-end">
               {findInRoster(pokemon.name) ? (
                 <button

@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import { AppContext } from "./AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -29,14 +29,29 @@ const ContextProvider = ({ children }) => {
     // TODO: fetch user from db & setAppUser(...) && setRoster() (full pokemons!!!)
   };
 
-  const fetchUsers = (id) => {
+
+  const fetchUsers = () => {
     // TODO: fetch users from db (replace the fake)
     setUsers(fakeData.users);
   };
 
-  const fetchLeaderboard = (id) => {
+  const fetchLeaderboard = () => {
     // TODO: fetch leaderboard from db & setLeaderboard(...)
-    setLeaderboard(fakeData.leaderboard);
+    //setLeaderboard(fakeData.leaderboard);
+
+    try {
+      const response = axios.get(
+        `${import.meta.env.VITE_API_SERVER}/api/leaderboard`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setLeaderboard(response.data);
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   /**
@@ -104,8 +119,8 @@ const ContextProvider = ({ children }) => {
    * @returns
    */
   const addToRoster = (pokemonName) => {
-    const found = findInRoster(pokemonName)
-    if (found ) {
+    const found = findInRoster(pokemonName);
+    if (found) {
       toast.warning(`pokemon is already on your roster`);
       return;
     }
@@ -147,6 +162,19 @@ const ContextProvider = ({ children }) => {
     console.log(result);
 
     // TODO: save to db
+    try {
+      const response = axios.post(
+        `${import.meta.env.VITE_API_SERVER}/api/battle`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("battle saved");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
