@@ -3,216 +3,158 @@ import { AppContext } from "./AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-import { fakeData } from "../data/fakeData";
-
 const ContextProvider = ({ children }) => {
-  // all users
-  const [users, setUsers] = useState(null);
-  // the app user
-  const [appUser, setAppUser] = useState(null);
-  // pokemon-list
-  const [limit, setLimit] = useState(18);
-  const [offset, setOffset] = useState(0);
-  const [count, setCount] = useState(null);
-  const [previous, setPrevious] = useState(null);
-  const [next, setNext] = useState(null);
-  const [pokemons, setPokemons] = useState(null);
-  // pokemon single, selected by user
-  const [userPokemon, setUserPokemon] = useState(null);
-  const [opponentPokemon, setOpponentPokemon] = useState(null);
-  // roster
-  const [roster, setRoster] = useState([]);
-  // leaderboard
-  const [leaderboard, setLeaderboard] = useState();
+  // App states
+  const [users, setUsers] = useState(null); // all users
+  const [appUser, setAppUser] = useState(null); // logged-in user
+  const [pokemons, setPokemons] = useState(null); // Pokémon list
+  const [userPokemon, setUserPokemon] = useState(null); // user's Pokémon
+  const [opponentPokemon, setOpponentPokemon] = useState(null); // opponent's Pokémon
+  const [roster, setRoster] = useState([]); // user's roster
+  const [leaderboard, setLeaderboard] = useState([]); // leaderboard
+  const [authToken, setAuthToken] = useState(null); // JWT token
+  const [loading, setLoading] = useState(false); // global loading state
 
-  const fetchUser = (id) => {
-    // TODO: fetch user from db & setAppUser(...) && setRoster() (full pokemons!!!)
-  };
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
-  const fetchUsers = () => {
-    // TODO: fetch users from db (replace the fake)
-    setUsers(fakeData.users);
-  };
-
-  const fetchLeaderboard = () => {
-    // TODO: fetch leaderboard from db & setLeaderboard(...)
-    //setLeaderboard(fakeData.leaderboard);
-
+  // Fetch all users
+  const fetchUsers = async () => {
     try {
-      const response = axios.get(
-        `${import.meta.env.VITE_API_SERVER}/api/leaderboard`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setLeaderboard(response.data);
+      const response = await axios.get(`${API_BASE_URL}/users`);
+      setUsers(response.data);
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Failed to fetch users: " + error.message);
     }
   };
 
-  /**
-   * fetches a list of pokemons
-   */
-  const fetchPokemons = async (url) => {
+  // Login user
+  const loginUser = async (email, password) => {
     try {
-      const urlToFetch =
-        url ||
-        `${import.meta.env.VITE_API_POKEMON}?offset=${offset}&limit=${limit}`;
-      const response = await axios.get(urlToFetch, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      setCount(response.data.count);
-      setPrevious(response.data.previous);
-      setNext(response.data.next);
+      setLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
+      setAppUser(response.data.user);
+      setAuthToken(response.data.token);
+      toast.success("Login successful!");
+    } catch (error) {
+      toast.error("Login failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Register user
+  const registerUser = async (userDetails) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, userDetails);
+      setAppUser(response.data.user);
+      setAuthToken(response.data.token);
+      toast.success("Registration successful!");
+    } catch (error) {
+      toast.error("Registration failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout user
+  const logoutUser = () => {
+    setAppUser(null);
+    setAuthToken(null);
+    toast.info("Logged out.");
+  };
+
+  // Fetch Pokémon
+  const fetchPokemons = async (url = `${API_BASE_URL}/pokemons`) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(url);
       setPokemons(response.data.results);
     } catch (error) {
-      toast.error("Error: " + error.message);
+      toast.error("Failed to fetch Pokémon: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  /**
-   * fetches a single pokemon by it's id
-   * @param {String} url the url of the pokemoon
-   * @param {String} owner  the owner of the pokemon ("user" or "opponent")
-   */
-  const fetchPokemonByUrl = async (url, owner) => {
+  // Fetch Pokémon by URL
+  const fetchPokemonByUrl = async (url, ownerType) => {
     try {
-      const response = await axios.get(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (owner === "user") {
-        setUserPokemon(response.data);
-      } else if (owner === "opponent") {
-        setOpponentPokemon(response.data);
-      } else {
-        return response.data;
-      }
+      setLoading(true);
+      const response = await axios.get(url);
+      if (ownerType === "user") setUserPokemon(response.data);
+      else if (ownerType === "opponent") setOpponentPokemon(response.data);
     } catch (error) {
-      toast.error("Error: " + error.message);
+      toast.error("Failed to fetch Pokémon: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // fetch the initial data
+  // Save battle results
+  const saveBattle = async (battle) => {
+    try {
+      await axios.post(`${API_BASE_URL}/battles`, battle, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      toast.success("Battle saved!");
+    } catch (error) {
+      toast.error("Failed to save battle: " + error.message);
+    }
+  };
+
+  // Fetch leaderboard
+  const fetchLeaderboard = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/leaderboard`);
+      setLeaderboard(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch leaderboard: " + error.message);
+    }
+  };
+
+  // Add to roster
+  const addToRoster = (pokemonName) => {
+    if (!roster.includes(pokemonName)) {
+      setRoster((prev) => [...prev, pokemonName]);
+      toast.success(`${pokemonName} added to roster!`);
+    } else {
+      toast.warning(`${pokemonName} is already in the roster.`);
+    }
+  };
+
+  // Remove from roster
+  const removeFromRoster = (pokemonName) => {
+    setRoster((prev) => prev.filter((name) => name !== pokemonName));
+    toast.info(`${pokemonName} removed from roster.`);
+  };
+
+  // Effect to fetch initial data
   useEffect(() => {
-    fetchPokemons();
     fetchUsers();
     fetchLeaderboard();
+    fetchPokemons();
   }, []);
-
-  useEffect(() => {
-    if (appUser && appUser.roster) {
-      setRoster(appUser.roster);
-    }
-  }, [appUser]);
-
-  /**
-   * adds a pokemon to the roster
-   * @param {String} pokemonName
-   * @returns
-   */
-  const addToRoster = (pokemonName) => {
-    const found = findInRoster(pokemonName);
-    if (found) {
-      toast.warning(`pokemon is already on your roster`);
-      return;
-    }
-    setRoster([...roster, pokemonName]);
-
-    // TODO: save to db
-  };
-
-  /**
-   * removes a pokemon from the roster
-   * @param {Object} pokemon
-   */
-  const removeFromRoster = (pokemon) => {
-    const res = roster.filter((element) => element !== pokemon.name);
-    setRoster(res);
-
-    // TODO: save to db
-  };
-
-  /**
-   * finds a pokemon in the roster
-   * @param {String} pokemonName
-   */
-  const findInRoster = (pokemonName) => {
-    return roster.find((element) => element === pokemonName);
-  };
-
-  /**
-   * saves the battle results to db
-   * @param {Object} result
-   */
-  const saveBattle = (result) => {
-    // const result = {
-    //   userPokemon,
-    //   opponentPokemon,
-    //   winner
-    // }
-
-    console.log(result);
-
-    // TODO: save to db
-    try {
-      const response = axios.post(
-        `${import.meta.env.VITE_API_SERVER}/api/battle`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      toast.success("battle saved");
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
 
   return (
     <AppContext.Provider
       value={{
-        // for user stuff
         users,
         appUser,
-        setAppUser,
-
-        // for list api calls
-        limit,
-        setLimit,
-        offset,
-        setOffset,
-        count,
-        next,
-        previous,
-        fetchPokemons,
+        loginUser,
+        registerUser,
+        logoutUser,
         pokemons,
-
-        // single pokemon stuff
-        fetchPokemonByUrl,
+        fetchPokemons,
         userPokemon,
-        setUserPokemon,
         opponentPokemon,
-        setOpponentPokemon,
-
-        // roster
-        roster,
-        setRoster,
-
+        fetchPokemonByUrl,
         addToRoster,
         removeFromRoster,
-        findInRoster,
-
+        roster,
         saveBattle,
         leaderboard,
+        loading,
       }}
     >
       {children}

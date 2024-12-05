@@ -1,115 +1,59 @@
-import { NavLink } from "react-router-dom";
-import { useApp } from "../../context/AppContext";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 const Header = () => {
-  const { userPokemon, users, setAppUser, setRoster } = useApp();
-
-  const handleChange = (e) => {
-    const id = parseInt(e.target.value);
-    const user = getUserById(id);
-    setRoster([])
-    setAppUser({ ...user });
-  };
-
-  const getUserById = (id) => {
-    return users.find((u) => u.id === id);
-  };
+  const { appUser, logoutUser } = useContext(AppContext);
 
   return (
-    <header className="z-10">
-      <nav className="navbar bg-base-100 shadow-xl">
-        <div className="flex-1">
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
+    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
+      <h1 className="text-lg font-bold">
+        <Link to="/" className="hover:text-gray-300">Pokémon Battle</Link>
+      </h1>
+      <nav>
+        <ul className="flex gap-4">
+          <li>
+            <Link to="/" className="hover:text-gray-300">Home</Link>
+          </li>
+          <li>
+            <Link to="/pokemon" className="hover:text-gray-300">Pokémon</Link>
+          </li>
+          <li>
+            <Link to="/roster" className="hover:text-gray-300">Roster</Link>
+          </li>
+          <li>
+            <Link to="/battle" className="hover:text-gray-300">Battle</Link>
+          </li>
+          <li>
+            <Link to="/leaderboard" className="hover:text-gray-300">Leaderboard</Link>
+          </li>
+          {appUser ? (
+            <>
+              <li>Welcome, {appUser.name}!</li>
               <li>
-                <NavLink to="/pokemon" className="text-nowrap">
-                  pokemons
-                </NavLink>
+                <button
+                  onClick={logoutUser}
+                  className="bg-red-600 hover:bg-red-500 px-3 py-1 rounded"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/login" className="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded">
+                  Login
+                </Link>
               </li>
               <li>
-                <NavLink to="/roster" className="text-nowrap">
-                  roster
-                </NavLink>
+                <Link to="/signup" className="bg-green-600 hover:bg-green-500 px-3 py-1 rounded">
+                  Sign Up
+                </Link>
               </li>
-              {userPokemon && (
-                <li>
-                  <NavLink to="/battle" className="text-nowrap">
-                    battle
-                  </NavLink>
-                </li>
-              )}
-              <li>
-                <NavLink to="/leaderboard" className="text-nowrap">
-                  leaderboard
-                </NavLink>
-              </li>
-            </ul>
-          </div>
-          <NavLink to="/" className="btn btn-ghost text-xl">
-            Pokemon Battle
-          </NavLink>
-        </div>
-
-        <div className="flex-none hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <NavLink to="/pokemon" className="text-nowrap">
-                pokemons
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/roster" className="text-nowrap">
-                roster
-              </NavLink>
-            </li>
-            {userPokemon && (
-              <li>
-                <NavLink to="/battle" className="text-nowrap">
-                  battle
-                </NavLink>
-              </li>
-            )}
-            <li>
-              <NavLink to="/leaderboard" className="text-nowrap">
-                leaderboard
-              </NavLink>
-            </li>
-          </ul>
-          <div className="form-control">
-            <select
-              name="user"
-              className="select select-bordered w-full max-w-xs"
-              onChange={handleChange}
-            >
-              <option>select user...</option>
-              {users &&
-                users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
+            </>
+          )}
+        </ul>
       </nav>
     </header>
   );
