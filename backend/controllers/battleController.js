@@ -1,4 +1,65 @@
-import asyncHandler from 'express-async-handler';
+import Battle from "../models/Battle.js";
+
+// Save a battle result
+export const saveBattle = async (req, res) => {
+  const { userId, opponentId, userPokemon, opponentPokemon, winner } = req.body;
+
+  if (!userId || !opponentId || !userPokemon || !opponentPokemon || !winner) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const battle = new Battle({
+      userId,
+      opponentId,
+      userPokemon,
+      opponentPokemon,
+      winner,
+    });
+
+    const savedBattle = await battle.save();
+    res.status(201).json({
+      message: "Battle saved successfully",
+      battle: savedBattle,
+    });
+  } catch (error) {
+    console.error("Error saving battle:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Get all battles
+export const getBattles = async (req, res) => {
+  try {
+    const battles = await Battle.find()
+      .populate("userId", "name email") // Populate user details
+      .populate("opponentId", "name email"); // Populate opponent details
+
+    res.status(200).json(battles);
+  } catch (error) {
+    console.error("Error fetching battles:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Get a battle by ID
+export const getBattleById = async (req, res) => {
+  try {
+    const battle = await Battle.findById(req.params.id)
+      .populate("userId", "name email")
+      .populate("opponentId", "name email");
+
+    if (!battle) {
+      return res.status(404).json({ message: "Battle not found" });
+    }
+
+    res.status(200).json(battle);
+  } catch (error) {
+    console.error("Error fetching battle by ID:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+/*import asyncHandler from 'express-async-handler';
 import { getRandomPokemon } from '../utils/pokemonHelper.js'; // A helper function for fetching random Pokémon
 import Roster from '../models/Roster.js';
 
@@ -32,3 +93,4 @@ export const battle = asyncHandler(async (req, res) => {
     opponentPokemon: randomPokemon,
   });
 });
+*/
