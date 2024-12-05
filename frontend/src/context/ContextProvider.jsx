@@ -129,7 +129,7 @@ const ContextProvider = ({ children }) => {
   };
 
   // Fetch leaderboard
-  const fetchLeaderboard = async () => {
+  /*const fetchLeaderboard = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/leaderboard`);
       setLeaderboard(response.data);
@@ -137,7 +137,7 @@ const ContextProvider = ({ children }) => {
       toast.error("Failed to fetch leaderboard: " + error.message);
     }
   };
-
+*/
   // Add to roster
   const addToRoster = (pokemonName) => {
     if (!roster.includes(pokemonName)) {
@@ -165,7 +165,7 @@ const ContextProvider = ({ children }) => {
   // Effect to fetch initial data
   useEffect(() => {
     // fetchUsers();
-    fetchLeaderboard();
+    //fetchLeaderboard();
     fetchPokemons();
   }, []);
 

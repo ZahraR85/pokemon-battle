@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useApp } from '../../context/AppContext';
 
 const LoginForm = () => {
-  const {setAppUser,setAuthToken} = useApp()
+  const {setAppUser,setAuthToken} = useApp()
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
