@@ -4,7 +4,7 @@ import BattleCard from "./BattleCard";
 import { toast } from "react-toastify";
 
 const BattlePage = () => {
-  const { count, fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle } =
+  const { fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle } =
     useApp();
 
   const [loading, setLoading] = useState(true);
