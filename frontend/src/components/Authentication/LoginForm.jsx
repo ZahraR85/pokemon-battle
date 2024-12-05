@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useApp } from '../../context/AppContext';
 
 const LoginForm = () => {
-  const {setAppUser} = useApp()
+  const {setAppUser,setAuthToken} = useApp()
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
@@ -18,6 +18,7 @@ const LoginForm = () => {
       const { data } = await axios.post(`${endpoints.auth.login}`, formData);
       toast.success(`Welcome back, ${data.name}`);
       setAppUser(data);
+      setAuthToken(data.token)
     } catch (error) {
       toast.error(`Error logging in  user: ${error.response.data.message}`)
     }
