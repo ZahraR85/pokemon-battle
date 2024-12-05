@@ -22,6 +22,8 @@ export const saveBattle = async (req, res) => {
       message: "Battle saved successfully",
       battle: savedBattle,
     });
+
+    // TODO: update leaderboard
   } catch (error) {
     console.error("Error saving battle:", error);
     res.status(500).json({ message: "Internal Server Error" });

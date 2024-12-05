@@ -10,6 +10,7 @@ const BattlePage = () => {
   const [loading, setLoading] = useState(true);
   const [winnerPokemon, setWinnerPokemon] = useState(null);
   const [winner, setWinner] = useState(null);
+  const [statUsedToFight,setStatUsedToFight] = useState(null);
 
   useEffect(() => {
 
@@ -28,7 +29,8 @@ const BattlePage = () => {
     // using random stats to define winner:
     toast.info("picking random stat for fighting");
     const randomStat = Math.floor(Math.random() * userPokemon.stats.length);
-    toast.info(`chose "${userPokemon.stats[randomStat].stat.name}"`);
+    setStatUsedToFight(userPokemon.stats[randomStat].stat.name);
+    toast.info(`chose "${statUsedToFight}"`);
 
     const userPokemonAttack = userPokemon.stats[randomStat].base_stat;
     const opponentPokemonAttack = opponentPokemon.stats[randomStat].base_stat;
@@ -51,6 +53,7 @@ const BattlePage = () => {
       userPokemon,
       opponentPokemon,
       winner,
+      statUsedToFight,
     };
 
     saveBattle(result);

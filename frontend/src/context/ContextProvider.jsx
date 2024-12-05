@@ -37,7 +37,7 @@ const ContextProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${endpoints.login}`, {
+      const response = await axios.post(`${endpoints.auth.login}`, {
         email,
         password,
       });
@@ -110,8 +110,16 @@ const ContextProvider = ({ children }) => {
 
   // Save battle results
   const saveBattle = async (battle) => {
+    console.log(authToken);
+    const data = {
+      userId: appUser._id,
+      opponentId:"675153390b970b5d858c2db3",
+      userPokemon: battle.userPokemon.name,
+      opponentPokemon: battle.opponentPokemon.name,
+      winner: battle.winner,
+    };
     try {
-      await axios.post(`${API_BASE_URL}/battles`, battle, {
+      await axios.post(`${API_BASE_URL}/battles`, data, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       toast.success("Battle saved!");
@@ -170,6 +178,8 @@ const ContextProvider = ({ children }) => {
         loginUser,
         registerUser,
         logoutUser,
+        authToken,
+        setAuthToken,
         pokemons,
         fetchPokemons,
         userPokemon,
