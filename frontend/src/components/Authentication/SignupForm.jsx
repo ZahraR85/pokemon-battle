@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { endpoints } from '../../api/api';
+import { toast } from 'react-toastify';
+
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -11,10 +14,10 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/signup', formData);
-      console.log('User registered successfully:', data);
+      const { data } = await axios.post(`${endpoints.auth.signup}`, formData);
+      toast.success('You have successfully registered')
     } catch (error) {
-      console.error('Error registering user:', error.response.data.message);
+      toast.error(`Error registering user: ${error.response.data.message}`)
     }
   };
 

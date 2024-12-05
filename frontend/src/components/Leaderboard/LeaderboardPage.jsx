@@ -7,7 +7,7 @@ const LeaderboardPage = () => {
     <ul className="max-w-screen-lg mx-auto p-4 my-8">
       {leaderboard &&
         leaderboard.map((user) => (
-          <li key={user.id}>
+          <li key={user._id}>
             {user.username}, score: {user.score}
           </li>
         ))}
