@@ -12,7 +12,10 @@ const BattlePage = () => {
   const [winner, setWinner] = useState(null);
 
   useEffect(() => {
-    const randomId = Math.floor(Math.random() * count) + 1;
+
+    // const randomId = Math.floor(Math.random() * count) + 1;
+    // some pokemons over 1000 are faulty
+    const randomId = Math.floor(Math.random() * 1000) + 1;
     const randomPokemonUrl = `${import.meta.env.VITE_API_POKEMON}/${randomId}`;
     fetchPokemonByUrl(randomPokemonUrl, "opponent");
   }, []);
@@ -23,9 +26,8 @@ const BattlePage = () => {
 
   const handleFight = () => {
     // using random stats to define winner:
-    toast.info('picking random stat for fighting');
+    toast.info("picking random stat for fighting");
     const randomStat = Math.floor(Math.random() * userPokemon.stats.length);
-    console.log(randomStat);
     toast.info(`chose "${userPokemon.stats[randomStat].stat.name}"`);
 
     const userPokemonAttack = userPokemon.stats[randomStat].base_stat;
@@ -48,8 +50,8 @@ const BattlePage = () => {
     const result = {
       userPokemon,
       opponentPokemon,
-      winner
-    }
+      winner,
+    };
 
     saveBattle(result);
   };
@@ -58,11 +60,17 @@ const BattlePage = () => {
     <>
       <ul className="max-w-screen-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 my-8">
         <li>
-          {userPokemon && <BattleCard pokemon={userPokemon} owner="user" winner={winner} />}
+          {userPokemon && (
+            <BattleCard pokemon={userPokemon} owner="user" winner={winner} />
+          )}
         </li>
         <li>
           {opponentPokemon && (
-            <BattleCard pokemon={opponentPokemon} owner="opponent" winner={winner} />
+            <BattleCard
+              pokemon={opponentPokemon}
+              owner="opponent"
+              winner={winner}
+            />
           )}
         </li>
       </ul>

@@ -5,7 +5,6 @@ const BattleCard = ({ pokemon, owner, winner }) => {
   const [isWinner, setIsWinner] = useState(false);
   const imgUrl = `${import.meta.env.VITE_API_POKEMON_IMG}${pokemon.id}.png`;
   useEffect(() => {
-    console.log(winner);
     if (winner && winner === owner) {
       setIsWinner(true);
     }
@@ -24,7 +23,7 @@ const BattleCard = ({ pokemon, owner, winner }) => {
         </h2>
         <ul>
           {pokemon.stats.map((stat) => (
-            <li key={stat.id}>
+            <li key={stat.stat.name}>
               {stat.stat.name}: {stat.base_stat}
             </li>
           ))}

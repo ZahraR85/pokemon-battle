@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { endpoints } from '../../api/api';
+import { toast } from 'react-toastify';
+import { useApp } from '../../context/AppContext';
 
 const LoginForm = () => {
+  const {setAppUser} = useApp()
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
@@ -11,10 +15,11 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', formData);
-      console.log('User logged in successfully:', data);
+      const { data } = await axios.post(`${endpoints.auth.login}`, formData);
+      toast.success(`Welcome back, ${data.name}`);
+      setAppUser(data);
     } catch (error) {
-      console.error('Error logging in user:', error.response.data.message);
+      toast.error(`Error logging in  user: ${error.response.data.message}`)
     }
   };
 

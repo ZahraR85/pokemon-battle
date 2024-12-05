@@ -2,11 +2,17 @@ import { useEffect, useState } from "react";
 import { AppContext } from "./AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { endpoints } from "../api/api";
 
 const ContextProvider = ({ children }) => {
   // App states
   const [users, setUsers] = useState(null); // all users
   const [appUser, setAppUser] = useState(null); // logged-in user
+  const [limit, setLimit] = useState(18);
+  const [offset, setOffset] = useState(0);
+  const [count, setCount] = useState(null);
+  const [previous, setPrevious] = useState(null);
+  const [next, setNext] = useState(null);
   const [pokemons, setPokemons] = useState(null); // Pokémon list
   const [userPokemon, setUserPokemon] = useState(null); // user's Pokémon
   const [opponentPokemon, setOpponentPokemon] = useState(null); // opponent's Pokémon
@@ -31,7 +37,10 @@ const ContextProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
+      const response = await axios.post(`${endpoints.login}`, {
+        email,
+        password,
+      });
       setAppUser(response.data.user);
       setAuthToken(response.data.token);
       toast.success("Login successful!");
@@ -46,7 +55,10 @@ const ContextProvider = ({ children }) => {
   const registerUser = async (userDetails) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, userDetails);
+      const response = await axios.post(
+        `${API_BASE_URL}/auth/register`,
+        userDetails
+      );
       setAppUser(response.data.user);
       setAuthToken(response.data.token);
       toast.success("Registration successful!");
@@ -65,11 +77,16 @@ const ContextProvider = ({ children }) => {
   };
 
   // Fetch Pokémon
-  const fetchPokemons = async (url = `${API_BASE_URL}/pokemons`) => {
+  const fetchPokemons = async (
+    url = `${import.meta.env.VITE_API_POKEMON}?limit=${limit}&offset=${offset}`
+  ) => {
     try {
       setLoading(true);
       const response = await axios.get(url);
       setPokemons(response.data.results);
+      setCount(response.data.count);
+      setPrevious(response.data.previous);
+      setNext(response.data.next);
     } catch (error) {
       toast.error("Failed to fetch Pokémon: " + error.message);
     } finally {
@@ -129,9 +146,17 @@ const ContextProvider = ({ children }) => {
     toast.info(`${pokemonName} removed from roster.`);
   };
 
+  /**
+   * finds a pokemon in the roster
+   * @param {Object} pokemon
+   */
+  const findInRoster = (pokemon) => {
+    return roster.find((element) => element.id === pokemon.id);
+  };
+
   // Effect to fetch initial data
   useEffect(() => {
-    fetchUsers();
+    // fetchUsers();
     fetchLeaderboard();
     fetchPokemons();
   }, []);
@@ -141,13 +166,16 @@ const ContextProvider = ({ children }) => {
       value={{
         users,
         appUser,
+        setAppUser,
         loginUser,
         registerUser,
         logoutUser,
         pokemons,
         fetchPokemons,
         userPokemon,
+        setUserPokemon,
         opponentPokemon,
+        setOpponentPokemon,
         fetchPokemonByUrl,
         addToRoster,
         removeFromRoster,
@@ -155,6 +183,11 @@ const ContextProvider = ({ children }) => {
         saveBattle,
         leaderboard,
         loading,
+
+        count,
+        previous,
+        next,
+        findInRoster,
       }}
     >
       {children}

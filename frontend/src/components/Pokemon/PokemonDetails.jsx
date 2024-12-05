@@ -57,7 +57,7 @@ const PokemonDetails = () => {
             <h2 className="card-title">{pokemon.name}</h2>
             <ul>
               {pokemon.stats.map((stat) => (
-                <li key={stat.id}>
+                <li key={stat.stat.name}>
                   {stat.stat.name}: {stat.base_stat}
                 </li>
               ))}
