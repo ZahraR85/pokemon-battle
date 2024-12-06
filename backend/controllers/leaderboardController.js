@@ -3,10 +3,10 @@ import Battle from '../models/Battle.js';
 
 // Add or update leaderboard entry
 export const addOrUpdateLeaderboardEntry = async (req, res) => {
-  const { userId, score } = req.body;
+  const { userId, username, score } = req.body;
 
-  if (!userId || score === undefined) {
-    return res.status(400).json({ message: 'User ID and score are required.' });
+  if (!userId || !username || score === undefined) {
+    return res.status(400).json({ message: 'User ID, username, and score are required.' });
   }
 
   try {
@@ -18,7 +18,7 @@ export const addOrUpdateLeaderboardEntry = async (req, res) => {
       return res.status(200).json(existingEntry);
     }
 
-    const newEntry = new Leaderboard({ userId, score });
+    const newEntry = new Leaderboard({ userId, username, score });
     await newEntry.save();
     res.status(201).json(newEntry);
   } catch (error) {
