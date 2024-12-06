@@ -116,6 +116,7 @@ const ContextProvider = ({ children }) => {
   const saveBattle = async (battle) => {
     const data = {
       userId: appUser._id,
+      userName: appUser.name,
       userPokemon: battle.userPokemon.name,
       opponentPokemon: battle.opponentPokemon.name,
       winner: battle.winner,
@@ -132,9 +133,14 @@ const ContextProvider = ({ children }) => {
 
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
+    console.log('authToken',authToken);
+    if(!authToken) return;
     try {
-      const response = await axios.get(`${API_BASE_URL}/leaderboard`);
+      const response = await axios.get(`${endpoints.leaderboard.base}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
       setLeaderboard(response.data);
+      console.log(response.data)
     } catch (error) {
       toast.error("Failed to fetch leaderboard: " + error.message);
     }
@@ -231,6 +237,7 @@ const ContextProvider = ({ children }) => {
         previous,
         next,
         findInRoster,
+        fetchLeaderboard,
       }}
     >
       {children}

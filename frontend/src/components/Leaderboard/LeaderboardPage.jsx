@@ -1,7 +1,13 @@
+import { useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 
 const LeaderboardPage = () => {
-  const {leaderboard} = useApp();
+  const {leaderboard,fetchLeaderboard} = useApp();
+
+  useEffect(()=>{
+    fetchLeaderboard()
+  },[])
+
   return (
     <>
     <ul className="max-w-screen-lg mx-auto p-4 my-8">
