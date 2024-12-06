@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useApp } from "../../context/AppContext";
 
 const PokemonDetails = () => {
-  const { setUserPokemon, findInRoster, addToRoster, removeFromRoster } =
+  const { setUserPokemon, findInRoster, addToRoster, removeFromRoster, appUser } =
     useApp();
   const { name } = useParams();
   const [pokemon, setPokemon] = useState(null);
@@ -62,23 +62,25 @@ const PokemonDetails = () => {
                 </li>
               ))}
             </ul>
+            {appUser && (
             <div className="card-actions justify-end">
-              {findInRoster(pokemon) ? (
-                <button
-                  className="btn"
-                  onClick={() => handleRemoveFromRoster()}
-                >
-                  remove from roster
-                </button>
-              ) : (
-                <button className="btn" onClick={() => handleAddToRoster()}>
-                  add to roster
-                </button>
-              )}
-              <button className="btn" onClick={() => handleBattle()}>
-                battle
+            {findInRoster(pokemon) ? (
+              <button
+                className="btn"
+                onClick={() => handleRemoveFromRoster()}
+              >
+                remove from roster
               </button>
-            </div>
+            ) : (
+              <button className="btn" onClick={() => handleAddToRoster()}>
+                add to roster
+              </button>
+            )}
+            <button className="btn" onClick={() => handleBattle()}>
+              battle
+            </button>
+          </div>
+          )}
           </div>
         </div>
       )}
