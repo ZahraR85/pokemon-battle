@@ -3,9 +3,7 @@ import { addOrUpdateLeaderboardEntry } from './leaderboardController.js';
 
 // Save a battle result
 export const saveBattle = async (req, res) => {
-
   const { userId, userPokemon, opponentPokemon, winner } = req.body;
-
   if (!userId || !userPokemon || !opponentPokemon || !winner) {
     return res.status(400).json({ message: "All fields are required" });
   }

@@ -1,4 +1,4 @@
-/*import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import BattleCard from "../Battle/BattleCard";
 import { toast } from "react-toastify";
@@ -46,32 +46,32 @@ const RosterPage = () => {
   );
 };
 
-export default RosterPage; */
-import { useEffect, useState } from 'react';
+export default RosterPage;
+/*
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { endpoints } from "../../api/api";
+import { useApp } from "../../context/AppContext";
 
-const Roster = ({ api }) => {
-    const [roster, setRoster] = useState([]);
+const Roster = () => {
+  // const [roster, setRoster] = useState([]);
+  const { authToken, roster, setRoster, getUserRoster } = useApp();
 
-    useEffect(() => {
-        const fetchRoster = async () => {
-            const response = await api.get('/api/rosters');
-            setRoster(response.data.pokemons || []);
-        };
+  useEffect(() => {
+    getUserRoster();
+  }, []);
 
-        fetchRoster();
-    }, [api]);
-
-    return (
-        <div>
-            <h1>Your Pokémon Roster</h1>
-            {roster.map(pokemon => (
-                <div key={pokemon.id}>
-                    {pokemon.name} - Level: {pokemon.level} - Type: {pokemon.type}
-                </div>
-            ))}
+  return (
+    <div>
+      <h1>Your Pokémon Roster</h1>
+      {roster.map((pokemon) => (
+        <div key={pokemon}>
+          {pokemon}
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default Roster;
-
+*/

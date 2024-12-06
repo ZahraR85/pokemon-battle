@@ -34,7 +34,7 @@ const PokemonDetails = () => {
   };
 
   const handleAddToRoster = () => {
-    addToRoster(pokemon.name);
+    addToRoster(pokemon);
     navigate("/roster");
   };
 
@@ -63,7 +63,7 @@ const PokemonDetails = () => {
               ))}
             </ul>
             <div className="card-actions justify-end">
-              {findInRoster(pokemon.name) ? (
+              {findInRoster(pokemon) ? (
                 <button
                   className="btn"
                   onClick={() => handleRemoveFromRoster()}
