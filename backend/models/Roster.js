@@ -5,7 +5,6 @@ const rosterSchema = new mongoose.Schema({
     pokemon: [
         { type: String },
     ]
-  });
-  
-  export default mongoose.model('Roster', rosterSchema);
-  
+});
+
+export default mongoose.model('Roster', rosterSchema);

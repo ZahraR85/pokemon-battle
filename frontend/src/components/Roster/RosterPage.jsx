@@ -47,31 +47,3 @@ const RosterPage = () => {
 };
 
 export default RosterPage;
-/*
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { endpoints } from "../../api/api";
-import { useApp } from "../../context/AppContext";
-
-const Roster = () => {
-  // const [roster, setRoster] = useState([]);
-  const { authToken, roster, setRoster, getUserRoster } = useApp();
-
-  useEffect(() => {
-    getUserRoster();
-  }, []);
-
-  return (
-    <div>
-      <h1>Your Pokémon Roster</h1>
-      {roster.map((pokemon) => (
-        <div key={pokemon}>
-          {pokemon}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-export default Roster;
-*/
