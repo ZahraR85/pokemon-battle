@@ -4,7 +4,7 @@ import BattleCard from "./BattleCard";
 import { toast } from "react-toastify";
 
 const BattlePage = () => {
-  const { fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle } =
+  const { fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle, appUser } =
     useApp();
 
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,7 @@ const BattlePage = () => {
         </li>
       </ul>
       <div className="max-w-screen-lg mx-auto p-4 my-8 text-center">
-        {winnerPokemon ? (
+        {winnerPokemon && appUser ? (
           <button className="btn btn-accent" onClick={() => handleSave()}>
             save battle
           </button>
