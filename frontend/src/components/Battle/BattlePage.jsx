@@ -48,17 +48,17 @@ const BattlePage = () => {
     }
   };
 
-  const handleSave = () => {
+const handleSave = () => {
     const result = {
       userPokemon,
       opponentPokemon,
       winner,
       statUsedToFight,
     };
-
+  
+    console.log("Battle result to save:", result); // Debug log
     saveBattle(result);
   };
-
   return (
     <>
       <ul className="max-w-screen-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 my-8">

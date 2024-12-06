@@ -114,31 +114,52 @@ const ContextProvider = ({ children }) => {
 
   // Save battle results
   const saveBattle = async (battle) => {
-    const data = {
-      userId: appUser._id,
-      userPokemon: battle.userPokemon.name,
-      opponentPokemon: battle.opponentPokemon.name,
-      winner: battle.winner,
-    };
     try {
-      await axios.post(`${endpoints.battle.base}`, data, {
-        headers: { Authorization: `Bearer ${authToken}` },
+      if (!authToken) {
+        toast.error("Authentication token is missing. Please log in again.");
+        return;
+      }
+  
+      const data = {
+        userId: appUser._id, // Ensure appUser is available in context
+        userPokemon: battle.userPokemon.name,
+        opponentPokemon: battle.opponentPokemon.name,
+        winner: battle.winner,
+      };
+  
+      await axios.post(`${API_BASE_URL}/battles`, data, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Pass token in headers
+        },
       });
-      toast.success("Battle saved!");
+  
+      toast.success("Battle saved successfully!");
     } catch (error) {
-      toast.error("Failed to save battle: " + error.message);
+      toast.error("Failed to save battle: " + error.response?.data?.message || error.message);
     }
   };
-
+  
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/leaderboard`);
-      setLeaderboard(response.data);
+      if (!authToken) {
+        toast.error("Authentication token is missing. Please log in again.");
+        return;
+      }
+  
+      const response = await axios.get(`${API_BASE_URL}/leaderboard`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Pass token in headers
+        },
+      });
+  
+      setLeaderboard(response.data); // Update leaderboard state
+      toast.success("Leaderboard fetched successfully!");
     } catch (error) {
-      toast.error("Failed to fetch leaderboard: " + error.message);
+      toast.error("Failed to fetch leaderboard: " + error.response?.data?.message || error.message);
     }
   };
+  
 
   // Add to roster
   const addToRoster = async (pokemon) => {
