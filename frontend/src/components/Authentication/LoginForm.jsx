@@ -3,10 +3,13 @@ import axios from "axios";
 import { endpoints } from "../../api/api";
 import { toast } from "react-toastify";
 import { useApp } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const { setAppUser, authToken, setAuthToken, getUserRoster } = useApp();
   const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,6 +22,7 @@ const LoginForm = () => {
       toast.success(`Welcome back, ${data.name}`);
       setAppUser(data);
       setAuthToken(data.token);
+      navigate("/pokemon");
     } catch (error) {
       toast.error(`Error logging in  user: ${error.response.data.message}`);
     }

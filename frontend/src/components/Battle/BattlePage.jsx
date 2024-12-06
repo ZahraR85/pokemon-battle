@@ -2,18 +2,25 @@ import { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import BattleCard from "./BattleCard";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const BattlePage = () => {
-  const { fetchPokemonByUrl, userPokemon, opponentPokemon, saveBattle, appUser } =
-    useApp();
+  const {
+    fetchPokemonByUrl,
+    userPokemon,
+    opponentPokemon,
+    saveBattle,
+    appUser,
+  } = useApp();
 
   const [loading, setLoading] = useState(true);
   const [winnerPokemon, setWinnerPokemon] = useState(null);
   const [winner, setWinner] = useState(null);
-  const [statUsedToFight,setStatUsedToFight] = useState(null);
+  const [statUsedToFight, setStatUsedToFight] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     // const randomId = Math.floor(Math.random() * count) + 1;
     // some pokemons over 1000 are faulty
     const randomId = Math.floor(Math.random() * 1000) + 1;
@@ -57,6 +64,7 @@ const BattlePage = () => {
     };
 
     saveBattle(result);
+    navigate("/leaderboard");
   };
 
   return (
