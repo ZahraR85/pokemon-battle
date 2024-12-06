@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { endpoints } from "../../api/api";
 import { toast } from "react-toastify";
 import { useApp } from "../../context/AppContext";
 
 const LoginForm = () => {
-  const { setAppUser, setAuthToken, getUserRoster } = useApp();
+  const { setAppUser, authToken, setAuthToken, getUserRoster } = useApp();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
@@ -19,11 +19,14 @@ const LoginForm = () => {
       toast.success(`Welcome back, ${data.name}`);
       setAppUser(data);
       setAuthToken(data.token);
-      getUserRoster();
     } catch (error) {
       toast.error(`Error logging in  user: ${error.response.data.message}`);
     }
   };
+
+  useEffect(() => {
+    getUserRoster();
+  }, [authToken]);
 
   return (
     <form onSubmit={handleSubmit}>
