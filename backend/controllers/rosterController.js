@@ -1,8 +1,11 @@
 import Roster from "../models/Roster.js";
 
 export const getRoster = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
   try {
-    const roster = await Roster.findOne({ userId: req.user.id });
+    const roster = await Roster.findOne({ userId: id });
     res.json(roster);
   } catch (error) {
     res.status(500).json({ message: error.message });

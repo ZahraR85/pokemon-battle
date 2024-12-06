@@ -183,7 +183,7 @@ const ContextProvider = ({ children }) => {
 
   const getUserRoster = async () => {
     if(!authToken) return;
-    const response = await axios.get(`${endpoints.roster.base}`, {
+    const response = await axios.get(`${endpoints.roster.base}/${appUser._id}`, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
     console.log(response.data);
