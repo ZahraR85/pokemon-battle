@@ -73,7 +73,7 @@ const LoginForm = () => {
           />
         </label>
         <button type="submit" className="btn">
-          Sign Up
+          Log In
         </button>
       </form>
     </div>
