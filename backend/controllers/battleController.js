@@ -2,16 +2,15 @@ import Battle from "../models/Battle.js";
 
 // Save a battle result
 export const saveBattle = async (req, res) => {
-  const { userId, opponentId, userPokemon, opponentPokemon, winner } = req.body;
+  const { userId, userPokemon, opponentPokemon, winner } = req.body;
 
-  if (!userId || !opponentId || !userPokemon || !opponentPokemon || !winner) {
+  if (!userId || !userPokemon || !opponentPokemon || !winner) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const battle = new Battle({
       userId,
-      opponentId,
       userPokemon,
       opponentPokemon,
       winner,
@@ -35,7 +34,6 @@ export const getBattles = async (req, res) => {
   try {
     const battles = await Battle.find()
       .populate("userId", "name email") // Populate user details
-      .populate("opponentId", "name email"); // Populate opponent details
 
     res.status(200).json(battles);
   } catch (error) {
@@ -49,7 +47,6 @@ export const getBattleById = async (req, res) => {
   try {
     const battle = await Battle.findById(req.params.id)
       .populate("userId", "name email")
-      .populate("opponentId", "name email");
 
     if (!battle) {
       return res.status(404).json({ message: "Battle not found" });

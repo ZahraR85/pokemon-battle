@@ -23,6 +23,10 @@ const ContextProvider = ({ children }) => {
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+  useEffect(() => {
+    saveRoster();
+  }, [roster]);
+
   // Fetch all users
   const fetchUsers = async () => {
     try {
@@ -110,16 +114,14 @@ const ContextProvider = ({ children }) => {
 
   // Save battle results
   const saveBattle = async (battle) => {
-    console.log(authToken);
     const data = {
       userId: appUser._id,
-      opponentId:"675153390b970b5d858c2db3",
       userPokemon: battle.userPokemon.name,
       opponentPokemon: battle.opponentPokemon.name,
       winner: battle.winner,
     };
     try {
-      await axios.post(`${API_BASE_URL}/battles`, data, {
+      await axios.post(`${endpoints.battle.base}`, data, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       toast.success("Battle saved!");
@@ -139,7 +141,8 @@ const ContextProvider = ({ children }) => {
   };
 
   // Add to roster
-  const addToRoster = (pokemonName) => {
+  const addToRoster = async (pokemon) => {
+    const pokemonName = pokemon.name;
     if (!roster.includes(pokemonName)) {
       setRoster((prev) => [...prev, pokemonName]);
       toast.success(`${pokemonName} added to roster!`);
@@ -149,9 +152,39 @@ const ContextProvider = ({ children }) => {
   };
 
   // Remove from roster
-  const removeFromRoster = (pokemonName) => {
+  const removeFromRoster = async (pokemon) => {
+    const pokemonName = pokemon.name;
     setRoster((prev) => prev.filter((name) => name !== pokemonName));
     toast.info(`${pokemonName} removed from roster.`);
+  };
+
+  const saveRoster = async () => {
+    if(!appUser) return;
+    const data = {
+      userId: appUser._id,
+      pokemon: roster,
+    };
+
+    try {
+      await axios.post(`${endpoints.roster.base}`, data, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      // toast.success("Roster saved!");
+    } catch (error) {
+      toast.error("Failed to save roster: " + error.message);
+    }
+  };
+
+  const getUserRoster = async () => {
+    console.log('authToken',authToken)
+    const response = await axios.get(
+      `${endpoints.roster.base}`,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+    console.log(response.data);
+    setRoster(response.data.pokemon || []);
   };
 
   /**
@@ -159,7 +192,8 @@ const ContextProvider = ({ children }) => {
    * @param {Object} pokemon
    */
   const findInRoster = (pokemon) => {
-    return roster.find((element) => element.id === pokemon.id);
+    console.log(pokemon.name);
+    return roster.find((element) => element === pokemon.name);
   };
 
   // Effect to fetch initial data
@@ -189,7 +223,9 @@ const ContextProvider = ({ children }) => {
         fetchPokemonByUrl,
         addToRoster,
         removeFromRoster,
+        getUserRoster,
         roster,
+        setRoster,
         saveBattle,
         leaderboard,
         loading,
