@@ -31,11 +31,11 @@ const Header = () => {
               </Link>
             </li>
           )}
-          <li>
+          {/* <li>
             <Link to="/battle" className="hover:text-gray-300">
               Battle
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/leaderboard" className="hover:text-gray-300">
               Leaderboard
