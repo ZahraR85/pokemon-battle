@@ -70,6 +70,14 @@ export const saveBattleResult = async (req, res) => {
   }
 
   try {
+    // Fetch usernames for userId and opponentId
+    const user = await User.findById(userId); // Assuming you have a User model
+    const winner = await User.findById(winnerId);
+
+    if (!user || !winner) {
+      return res.status(404).json({ message: 'User or winner not found.' });
+    }
+
     // Save the battle
     const battle = new Battle({
       userId,
@@ -82,7 +90,7 @@ export const saveBattleResult = async (req, res) => {
 
     // Update leaderboard for the winner
     await addOrUpdateLeaderboardEntry({
-      body: { userId: winnerId, score: 10 },
+      body: { userId: winnerId, username: winner.name, score: 10 },
     });
 
     res.status(201).json({ message: 'Battle saved and leaderboard updated successfully.' });
