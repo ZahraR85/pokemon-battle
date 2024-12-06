@@ -1,60 +1,92 @@
 import Leaderboard from '../models/Leaderboard.js';
+import Battle from '../models/Battle.js';
 
-export const addLeaderboardEntry = async (req, res) => {
-    const { username, score } = req.body;
+// Add or update leaderboard entry
+export const addOrUpdateLeaderboardEntry = async (req, res) => {
+  const { userId, score } = req.body;
 
-    if (!username || score === undefined) {
-        return res.status(400).json({ message: 'Username and score are required.' });
+  if (!userId || score === undefined) {
+    return res.status(400).json({ message: 'User ID and score are required.' });
+  }
+
+  try {
+    const existingEntry = await Leaderboard.findOne({ userId });
+
+    if (existingEntry) {
+      existingEntry.score += score;
+      await existingEntry.save();
+      return res.status(200).json(existingEntry);
     }
 
-    try {
-        const newEntry = new Leaderboard({ username, score });
-        await newEntry.save();
-        res.status(201).json(newEntry);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to create leaderboard entry.', error });
-    }
+    const newEntry = new Leaderboard({ userId, score });
+    await newEntry.save();
+    res.status(201).json(newEntry);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update leaderboard.', error });
+  }
 };
+
+// Get the leaderboard
 export const getLeaderboard = async (req, res) => {
   try {
-      const leaderboard = await Leaderboard.find().sort({ score: -1 }); // Sort by score descending
-      res.status(200).json(leaderboard);
+    const leaderboard = await Leaderboard.find()
+      .populate('userId', 'name') // Include user names
+      .sort({ score: -1 }); // Sort by score descending
+    res.status(200).json(leaderboard);
   } catch (error) {
-      res.status(500).json({ message: 'Failed to retrieve leaderboard.', error });
+    res.status(500).json({ message: 'Failed to retrieve leaderboard.', error });
   }
 };
-export const updateLeaderboardEntry = async (req, res) => {
-  const { id } = req.params;
-  const { score } = req.body;
 
-  try {
-      const updatedEntry = await Leaderboard.findByIdAndUpdate(
-          id,
-          { score },
-          { new: true } // Return the updated document
-      );
-
-      if (!updatedEntry) {
-          return res.status(404).json({ message: 'Entry not found.' });
-      }
-
-      res.status(200).json(updatedEntry);
-  } catch (error) {
-      res.status(500).json({ message: 'Failed to update leaderboard entry.', error });
-  }
-};
+// Delete a user's leaderboard entry
 export const deleteLeaderboardEntry = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.id; // Logged-in user
 
   try {
-      const deletedEntry = await Leaderboard.findByIdAndDelete(id);
+    const entry = await Leaderboard.findById(id);
 
-      if (!deletedEntry) {
-          return res.status(404).json({ message: 'Entry not found.' });
-      }
+    if (!entry) {
+      return res.status(404).json({ message: 'Entry not found.' });
+    }
 
-      res.status(200).json({ message: 'Entry deleted successfully.' });
+    if (entry.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'You are not authorized to delete this entry.' });
+    }
+
+    await entry.deleteOne();
+    res.status(200).json({ message: 'Entry deleted successfully.' });
   } catch (error) {
-      res.status(500).json({ message: 'Failed to delete leaderboard entry.', error });
+    res.status(500).json({ message: 'Failed to delete leaderboard entry.', error });
+  }
+};
+
+// Add a battle result and update leaderboard
+export const saveBattleResult = async (req, res) => {
+  const { userId, opponentId, winnerId, userScore, opponentScore } = req.body;
+
+  if (!userId || !opponentId || !winnerId || userScore === undefined || opponentScore === undefined) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  try {
+    // Save the battle
+    const battle = new Battle({
+      userId,
+      opponentId,
+      winner: winnerId,
+      userScore,
+      opponentScore,
+    });
+    await battle.save();
+
+    // Update leaderboard for the winner
+    await addOrUpdateLeaderboardEntry({
+      body: { userId: winnerId, score: 10 },
+    });
+
+    res.status(201).json({ message: 'Battle saved and leaderboard updated successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to save battle result.', error });
   }
 };

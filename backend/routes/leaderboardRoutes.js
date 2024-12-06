@@ -1,16 +1,17 @@
 import express from 'express';
 import {
-    getLeaderboard,
-    addLeaderboardEntry,
-    updateLeaderboardEntry,
-    deleteLeaderboardEntry,
+  addOrUpdateLeaderboardEntry,
+  getLeaderboard,
+  deleteLeaderboardEntry,
+  saveBattleResult,
 } from '../controllers/leaderboardController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getLeaderboard); // Get all entries
-router.post('/', addLeaderboardEntry); // Add a new entry
-router.put('/:id', updateLeaderboardEntry); // Update an entry
-router.delete('/:id', deleteLeaderboardEntry); // Delete an entry
+router.post('/addOrUpdate', protect, addOrUpdateLeaderboardEntry); // Add or update leaderboard entry
+router.get('/', protect, getLeaderboard); // Get leaderboard
+router.post('/battle', protect, saveBattleResult); // Save a battle result
+router.delete('/:id', protect, deleteLeaderboardEntry); // Delete a user's leaderboard entry
 
 export default router;
