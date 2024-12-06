@@ -159,7 +159,7 @@ const ContextProvider = ({ children }) => {
   };
 
   const saveRoster = async () => {
-    if(!appUser) return;
+    if (!appUser) return;
     const data = {
       userId: appUser._id,
       pokemon: roster,
@@ -176,13 +176,10 @@ const ContextProvider = ({ children }) => {
   };
 
   const getUserRoster = async () => {
-    console.log('authToken',authToken)
-    const response = await axios.get(
-      `${endpoints.roster.base}`,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-      }
-    );
+    if(!authToken) return;
+    const response = await axios.get(`${endpoints.roster.base}`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
     console.log(response.data);
     setRoster(response.data.pokemon || []);
   };
