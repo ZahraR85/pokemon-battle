@@ -3,20 +3,20 @@ import { addOrUpdateLeaderboardEntry } from './leaderboardController.js';
 
 // Save a battle result
 export const saveBattle = async (req, res) => {
-  const { userId, opponentId, winnerId, userScore, opponentScore } = req.body;
 
-  if (!userId || !opponentId || !winnerId || userScore === undefined || opponentScore === undefined) {
-    return res.status(400).json({ message: 'All fields are required.' });
+  const { userId, userPokemon, opponentPokemon, winner } = req.body;
+
+  if (!userId || !userPokemon || !opponentPokemon || !winner) {
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     // Save the battle
     const battle = new Battle({
       userId,
-      opponentId,
-      winner: winnerId,
-      userScore,
-      opponentScore,
+      userPokemon,
+      opponentPokemon,
+      winner,
     });
     await battle.save();
 
@@ -36,9 +36,9 @@ export const getBattles = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const battles = await Battle.find({ $or: [{ userId }, { opponentId: userId }] })
-      .populate('userId', 'name')
-      .populate('opponentId', 'name');
+
+    const battles = await Battle.find()
+      .populate("userId", "name email") // Populate user details
 
     res.status(200).json(battles);
   } catch (error) {
@@ -50,8 +50,7 @@ export const getBattles = async (req, res) => {
 export const getBattleById = async (req, res) => {
   try {
     const battle = await Battle.findById(req.params.id)
-      .populate('userId', 'name')
-      .populate('opponentId', 'name');
+      .populate("userId", "name email")
 
     if (!battle) {
       return res.status(404).json({ message: 'Battle not found.' });
