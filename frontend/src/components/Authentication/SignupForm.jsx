@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { endpoints } from "../../api/api";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const SignupForm = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,6 +22,7 @@ const SignupForm = () => {
     try {
       const { data } = await axios.post(`${endpoints.auth.signup}`, formData);
       toast.success("You have successfully registered");
+      navigate("/login");
     } catch (error) {
       toast.error(`Error registering user: ${error.response.data.message}`);
     }
@@ -27,7 +31,6 @@ const SignupForm = () => {
   return (
     <div className="bg-base-100 max-w-screen-lg mx-auto shadow-xl p-8">
       <form onSubmit={handleSubmit}>
-
         <label className="input input-bordered flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +90,9 @@ const SignupForm = () => {
             className="grow"
           />
         </label>
-        <button type="submit" className="btn">Sign Up</button>
+        <button type="submit" className="btn">
+          Sign Up
+        </button>
       </form>
     </div>
   );
