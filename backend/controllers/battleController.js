@@ -1,10 +1,10 @@
-import Battle from '../models/Battle.js';
-import { addOrUpdateLeaderboardEntry } from './leaderboardController.js';
+import Battle from "../models/Battle.js";
+import { addOrUpdateLeaderboardEntry } from "./leaderboardController.js";
 
 // Save a battle result
 export const saveBattle = async (req, res) => {
-  const { userId, userPokemon, opponentPokemon, winner } = req.body;
-  if (!userId || !userPokemon || !opponentPokemon || !winner) {
+  const { userId, userName, userPokemon, opponentPokemon, winner } = req.body;
+  if (!userId || !userName || !userPokemon || !opponentPokemon || !winner) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -19,13 +19,15 @@ export const saveBattle = async (req, res) => {
     await battle.save();
 
     // Update leaderboard for the winner
+
+    const userScore = winner === "user" ? 10 : -10;
     await addOrUpdateLeaderboardEntry({
-      body: { userId: winnerId, score: 10 },
+      body: { userId: userId, userName: userName, score: userScore },
     });
 
-    res.status(201).json({ message: 'Battle saved successfully.', battle });
+    res.status(201).json({ message: "Battle saved successfully.", battle });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to save battle.', error });
+    res.status(500).json({ message: "Failed to save battle.", error });
   }
 };
 
@@ -34,28 +36,28 @@ export const getBattles = async (req, res) => {
   const userId = req.user.id;
 
   try {
-
-    const battles = await Battle.find()
-      .populate("userId", "name email") // Populate user details
+    const battles = await Battle.find().populate("userId", "name email"); // Populate user details
 
     res.status(200).json(battles);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve battles.', error });
+    res.status(500).json({ message: "Failed to retrieve battles.", error });
   }
 };
 
 // Get a specific battle by ID
 export const getBattleById = async (req, res) => {
   try {
-    const battle = await Battle.findById(req.params.id)
-      .populate("userId", "name email")
+    const battle = await Battle.findById(req.params.id).populate(
+      "userId",
+      "name email"
+    );
 
     if (!battle) {
-      return res.status(404).json({ message: 'Battle not found.' });
+      return res.status(404).json({ message: "Battle not found." });
     }
 
     res.status(200).json(battle);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to retrieve battle.', error });
+    res.status(500).json({ message: "Failed to retrieve battle.", error });
   }
 };
