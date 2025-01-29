@@ -8,12 +8,14 @@ import Header from "../components/partials/Header";
 const Layout = () => {
   return (
     <ContextProvider>
-      <Header />
-      <main className="my-8">
-        <Outlet />
-      </main>
-      <Footer />
-      <ToastContainer />
+      <div className="bg-gray-300 min-h-screen">
+        <Header />
+        <main className="my-8">
+          <Outlet />
+        </main>
+        <Footer />
+        <ToastContainer />
+      </div>
     </ContextProvider>
   );
 };
